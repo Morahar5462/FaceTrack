@@ -1,0 +1,198 @@
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero bg-dark text-light text-center py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-lg-start">
+                <h1 class="display-4 fw-bold mb-4">Smart Attendance Management System</h1>
+                <p class="lead mb-4">
+                    Automate your attendance tracking with advanced facial recognition technology.
+                    Designed for modern educational institutions.
+                </p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'teacher' %}
+                            <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                                <i class="fas fa-chalkboard-teacher me-2"></i>Teacher Dashboard
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('student_dashboard') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                                <i class="fas fa-user-graduate me-2"></i>Student Dashboard
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                        <a href="{{ url_for('register') }}" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block mt-5 mt-lg-0 text-center">
+                <svg width="400" height="300" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Face recognition illustration -->
+                    <rect x="150" y="50" width="300" height="300" rx="20" fill="#343a40" stroke="#6c757d" stroke-width="4"/>
+                    <circle cx="300" cy="150" r="70" fill="none" stroke="#0d6efd" stroke-width="4"/>
+                    <circle cx="270" cy="130" r="10" fill="#0d6efd"/>
+                    <circle cx="330" cy="130" r="10" fill="#0d6efd"/>
+                    <path d="M260,180 Q300,210 340,180" fill="none" stroke="#0d6efd" stroke-width="4"/>
+                    <rect x="220" y="240" width="160" height="30" rx="5" fill="#0d6efd" opacity="0.7"/>
+                    <rect x="250" y="280" width="100" height="20" rx="5" fill="#0d6efd" opacity="0.5"/>
+                    <!-- Grid lines for face detection -->
+                    <line x1="200" y1="50" x2="200" y2="350" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="250" y1="50" x2="250" y2="350" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="300" y1="50" x2="300" y2="350" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="350" y1="50" x2="350" y2="350" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="400" y1="50" x2="400" y2="350" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="150" y1="100" x2="450" y2="100" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="150" y1="150" x2="450" y2="150" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="150" y1="200" x2="450" y2="200" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="150" y1="250" x2="450" y2="250" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                    <line x1="150" y1="300" x2="450" y2="300" stroke="#6c757d" stroke-width="1" stroke-dasharray="5,5"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Key Features</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width:64px;height:64px;">
+                            <i class="fas fa-camera fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Face Recognition</h5>
+                        <p class="card-text">Automatically mark attendance through facial recognition technology with high accuracy and fast detection speed.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-success bg-gradient text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width:64px;height:64px;">
+                            <i class="fas fa-chart-pie fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Detailed Analytics</h5>
+                        <p class="card-text">Get comprehensive attendance reports, student statistics, and course-wise analytics in real-time.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="feature-icon bg-info bg-gradient text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width:64px;height:64px;">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                        <h5 class="card-title">Role-Based Access</h5>
+                        <p class="card-text">Separate interfaces for teachers and students with specific features tailored to their needs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="how-it-works py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">How It Works</h2>
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-number">1</div>
+                        <div class="timeline-content">
+                            <h5>Register & Enroll</h5>
+                            <p>Students register faces for unique identification and enroll in available courses.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-number">2</div>
+                        <div class="timeline-content">
+                            <h5>Initiate Attendance Session</h5>
+                            <p>Teachers create attendance sessions for specific courses and dates.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-number">3</div>
+                        <div class="timeline-content">
+                            <h5>Automated Face Recognition</h5>
+                            <p>System recognizes student faces in real-time and marks attendance automatically.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-number">4</div>
+                        <div class="timeline-content">
+                            <h5>Generate Reports</h5>
+                            <p>Access comprehensive reports, analytics, and export data for further use.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta py-5 bg-primary text-white text-center">
+    <div class="container">
+        <h2 class="mb-4">Ready to Simplify Attendance Management?</h2>
+        <p class="lead mb-4">Join hundreds of institutions already using AttendEase to save time and improve accuracy.</p>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('register') }}" class="btn btn-light btn-lg px-5">
+                Get Started Today
+            </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block head %}
+<style>
+.timeline {
+    position: relative;
+    padding-left: 50px;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    width: 2px;
+    height: 100%;
+    background-color: var(--bs-primary);
+}
+.timeline-item {
+    position: relative;
+    margin-bottom: 40px;
+}
+.timeline-number {
+    position: absolute;
+    left: -50px;
+    top: -5px;
+    width: 40px;
+    height: 40px;
+    background-color: var(--bs-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    z-index: 1;
+}
+.timeline-content {
+    padding: 20px;
+    background-color: var(--bs-dark);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}
