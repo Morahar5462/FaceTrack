@@ -1,0 +1,243 @@
+{% extends "layout.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Student Dashboard</h2>
+        <a href="{{ url_for('enroll_courses') }}" class="btn btn-primary">
+            <i class="fas fa-book me-1"></i> Enroll in Courses
+        </a>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3 p-3 rounded-circle bg-primary text-white">
+                            <i class="fas fa-book fa-2x"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Enrolled Courses</h6>
+                            <h3 class="mb-0">{{ total_courses }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3 p-3 rounded-circle {% if average_attendance > 75 %}bg-success{% elif average_attendance > 50 %}bg-warning{% else %}bg-danger{% endif %} text-white">
+                            <i class="fas fa-chart-line fa-2x"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Average Attendance</h6>
+                            <h3 class="mb-0">{{ average_attendance }}%</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3 p-3 rounded-circle {% if face_registered %}bg-success{% else %}bg-warning{% endif %} text-white">
+                            <i class="fas fa-camera fa-2x"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Face Status</h6>
+                            <h3 class="mb-0">{% if face_registered %}Registered{% else %}Not Registered{% endif %}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Enrolled Courses -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0"><i class="fas fa-book me-2"></i>Your Courses</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if courses_data %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="color: white;">Course</th>
+                                        <th style="color: white;">Code</th>
+                                        <th style="color: white;">Attendance</th>
+                                        <th style="color: white;">Enrolled On</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in courses_data %}
+                                        <tr>
+                                            <td style="color: white;">{{ item.course.name }}</td>
+                                            <td><span class="badge bg-secondary">{{ item.course.code }}</span></td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                                        {% if item.attendance_percentage > 75 %}
+                                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.attendance_percentage }}%"></div>
+                                                        {% elif item.attendance_percentage > 50 %}
+                                                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ item.attendance_percentage }}%"></div>
+                                                        {% else %}
+                                                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ item.attendance_percentage }}%"></div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <span class="badge {% if item.attendance_percentage > 75 %}bg-success{% elif item.attendance_percentage > 50 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                        {{ item.attendance_percentage }}%
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>{{ item.enrolled_at.strftime('%d %b, %Y') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center p-4">
+                            <div class="mb-3">
+                                <i class="fas fa-book-open text-muted fa-3x"></i>
+                            </div>
+                            <h5>No courses enrolled</h5>
+                            <p class="text-muted">Start by enrolling in available courses</p>
+                            <a href="{{ url_for('enroll_courses') }}" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i> Enroll Now
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Face Registration Status -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0"><i class="fas fa-camera me-2"></i>Face Registration</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if face_registered %}
+                        <div class="mb-3">
+                            <div class="d-inline-block p-3 rounded-circle bg-success text-white mb-3">
+                                <i class="fas fa-check-circle fa-3x"></i>
+                            </div>
+                            <h5>Face Successfully Registered</h5>
+                            <p class="text-muted">Your face is registered for automated attendance.</p>
+                            <a href="{{ url_for('face_registration') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-sync me-1"></i> Update Face
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="mb-3">
+                            <div class="d-inline-block p-3 rounded-circle bg-warning text-white mb-3">
+                                <i class="fas fa-exclamation-triangle fa-3x"></i>
+                            </div>
+                            <h5>Face Not Registered</h5>
+                            <p class="text-muted">Please register your face to use automated attendance marking.</p>
+                            <a href="{{ url_for('face_registration') }}" class="btn btn-primary">
+                                <i class="fas fa-camera me-1"></i> Register Face
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Attendance Overview Chart -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Attendance Overview</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="attendanceChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attendance pie chart
+        const ctx = document.getElementById('attendanceChart').getContext('2d');
+        
+        {% if courses_data %}
+            const chartData = {
+                labels: [
+                    {% for item in courses_data %}
+                        '{{ item.course.code }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    data: [
+                        {% for item in courses_data %}
+                            {{ item.attendance_percentage }},
+                        {% endfor %}
+                    ],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)',
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(255, 205, 86, 0.6)',
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 205, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            
+            const myChart = new Chart(ctx, {
+                type: 'pie',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        {% else %}
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#6c757d';
+            ctx.textAlign = 'center';
+            ctx.fillText('No data available', ctx.canvas.width/2, ctx.canvas.height/2);
+        {% endif %}
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "layout.html" %}
+
+{% block title %}Course Enrollment{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Course Enrollment</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-book me-2"></i>Course Enrollment</h2>
+        <a href="{{ url_for('student_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    {% if available_courses %}
+        <div class="row mb-4">
+            <div class="col-md-6 col-lg-4 mx-auto">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-dark">
+                        <h5 class="mb-0"><i class="fas fa-search me-2"></i>Find Courses</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="courseSearch" class="form-control" placeholder="Search courses...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="courseContainer">
+            {% for course in available_courses %}
+                <div class="col course-item">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-header bg-dark">
+                            <h5 class="card-title mb-0">{{ course.name }}</h5>
+                            <span class="badge bg-secondary">{{ course.code }}</span>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                {% if course.description %}
+                                    {{ course.description }}
+                                {% else %}
+                                    <span class="text-muted">No description available</span>
+                                {% endif %}
+                            </p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted">Teacher: 
+                                        <span class="fw-medium">{{ course.teacher.username }}</span>
+                                    </small>
+                                </div>
+                                <form method="POST" action="{{ url_for('enroll_courses') }}">
+                                    <input type="hidden" name="course_id" value="{{ course.id }}">
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-sign-in-alt me-1"></i> Enroll
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center p-5">
+                <div class="mb-3">
+                    <i class="fas fa-book-open text-muted fa-4x"></i>
+                </div>
+                <h4>No courses available</h4>
+                <p class="text-muted">There are no available courses for enrollment at the moment, or you may already be enrolled in all available courses.</p>
+                <a href="{{ url_for('student_dashboard') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const courseSearch = document.getElementById('courseSearch');
+        const courseItems = document.querySelectorAll('.course-item');
+        
+        if (courseSearch) {
+            courseSearch.addEventListener('input', function() {
+                const searchValue = this.value.toLowerCase();
+                
+                courseItems.forEach(function(item) {
+                    const courseName = item.querySelector('.card-title').textContent.toLowerCase();
+                    const courseCode = item.querySelector('.badge').textContent.toLowerCase();
+                    const courseDesc = item.querySelector('.card-text').textContent.toLowerCase();
+                    
+                    if (courseName.includes(searchValue) || courseCode.includes(searchValue) || courseDesc.includes(searchValue)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                
+                // Check if any courses are visible
+                const visibleCourses = document.querySelectorAll('.course-item[style=""]');
+                const courseContainer = document.getElementById('courseContainer');
+                
+                if (visibleCourses.length === 0 && searchValue.length > 0) {
+                    // No courses found
+                    if (!document.getElementById('no-courses-message')) {
+                        const noCoursesMessage = document.createElement('div');
+                        noCoursesMessage.id = 'no-courses-message';
+                        noCoursesMessage.className = 'col-12 text-center p-4';
+                        noCoursesMessage.innerHTML = `
+                            <div class="mb-3">
+                                <i class="fas fa-search text-muted fa-3x"></i>
+                            </div>
+                            <h5>No courses found</h5>
+                            <p class="text-muted">Try a different search term</p>
+                        `;
+                        courseContainer.appendChild(noCoursesMessage);
+                    }
+                } else {
+                    // Remove no courses message if it exists
+                    const noCoursesMessage = document.getElementById('no-courses-message');
+                    if (noCoursesMessage) {
+                        noCoursesMessage.remove();
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

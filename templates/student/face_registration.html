@@ -1,0 +1,293 @@
+{% extends "layout.html" %}
+
+{% block title %}Face Registration{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('student_dashboard') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Face Registration</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-camera me-2"></i>Face Registration</h2>
+        <a href="{{ url_for('student_dashboard') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0"><i class="fas fa-camera me-2"></i>Webcam Capture</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div id="camera-container" class="position-relative mx-auto mb-3" style="max-width: 400px;">
+                            <video id="webcam" class="img-fluid rounded" autoplay playsinline></video>
+                            <canvas id="canvas" class="d-none position-absolute top-0 start-0"></canvas>
+                            <div id="loading-indicator" class="position-absolute top-50 start-50 translate-middle d-none">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <div id="face-overlay" class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                                <svg width="250" height="250" viewBox="0 0 250 250" class="face-guide">
+                                    <circle cx="125" cy="125" r="100" fill="none" stroke="#0d6efd" stroke-width="2" stroke-dasharray="10,5" />
+                                    <path d="M90,110 Q125,150 160,110" fill="none" stroke="#0d6efd" stroke-width="2" stroke-dasharray="5,5" />
+                                    <circle cx="90" cy="90" r="10" fill="none" stroke="#0d6efd" stroke-width="2" />
+                                    <circle cx="160" cy="90" r="10" fill="none" stroke="#0d6efd" stroke-width="2" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button id="start-btn" class="btn btn-primary me-2">
+                                <i class="fas fa-play me-1"></i> Start Camera
+                            </button>
+                            <button id="capture-btn" class="btn btn-success me-2" disabled>
+                                <i class="fas fa-camera me-1"></i> Capture
+                            </button>
+                            <button id="retake-btn" class="btn btn-warning me-2 d-none">
+                                <i class="fas fa-redo me-1"></i> Retake
+                            </button>
+                            <button id="stop-btn" class="btn btn-secondary" disabled>
+                                <i class="fas fa-stop me-1"></i> Stop
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Face Registration Status</h5>
+                </div>
+                <div class="card-body">
+                    {% if face_registered %}
+                        <div class="alert alert-success" role="alert">
+                            <h5 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Face Already Registered</h5>
+                            <p>Your face is already registered in the system and can be used for automated attendance marking.</p>
+                            <hr>
+                            <div class="d-flex">
+                                <p class="mb-0">If you need to update your face registration, you can remove the current one and register again.</p>
+                                <form method="POST" action="{{ url_for('update_face') }}" class="ms-auto">
+                                    <button type="submit" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-sync me-1"></i> Update Face
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div id="capture-result" class="d-none">
+                            <div class="text-center mb-3">
+                                <canvas id="result-canvas" class="img-fluid rounded border"></canvas>
+                            </div>
+                            <form id="registration-form" method="POST" action="{{ url_for('face_registration') }}">
+                                <input type="hidden" id="image_data" name="image_data">
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-1"></i> Register Face
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div id="instructions" class="mb-0">
+                            <h5 class="mb-3">Instructions for Face Registration</h5>
+                            <ol class="mb-4">
+                                <li>Ensure you are in a well-lit area</li>
+                                <li>Position your face within the circle guide</li>
+                                <li>Remove glasses, masks, or anything covering your face</li>
+                                <li>Keep a neutral expression (slight smile is okay)</li>
+                                <li>Look directly at the camera</li>
+                                <li>Click the "Capture" button when ready</li>
+                            </ol>
+                            
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Your face encoding will be used for attendance. Make sure your face is clearly visible during registration.
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-dark">
+                    <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Privacy Information</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">
+                        <i class="fas fa-lock me-2 text-success"></i>
+                        Your face data is securely encoded and stored in our database. It is only used for attendance verification and will never be shared with third parties.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<style>
+.face-guide {
+    opacity: 0.7;
+    pointer-events: none;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const video = document.getElementById('webcam');
+        const canvas = document.getElementById('canvas');
+        const resultCanvas = document.getElementById('result-canvas');
+        const startBtn = document.getElementById('start-btn');
+        const captureBtn = document.getElementById('capture-btn');
+        const retakeBtn = document.getElementById('retake-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const captureResult = document.getElementById('capture-result');
+        const instructions = document.getElementById('instructions');
+        const imageDataInput = document.getElementById('image_data');
+        const faceOverlay = document.getElementById('face-overlay');
+        let streaming = false;
+        
+        // Hide start button, we'll start automatically
+        startBtn.style.display = 'none';
+        
+        // Function to start webcam
+        async function startWebcam() {
+            try {
+                const constraints = {
+                    video: {
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        facingMode: 'user'
+                    }
+                };
+                
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = stream;
+                streaming = true;
+                
+                // Enable capture button, disable start button
+                captureBtn.disabled = false;
+                stopBtn.disabled = false;
+                startBtn.disabled = true;
+                
+                // Set canvas size to match video
+                video.addEventListener('loadedmetadata', function() {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    resultCanvas.width = video.videoWidth;
+                    resultCanvas.height = video.videoHeight;
+                });
+                
+                return true;
+            } catch (err) {
+                console.error('Error accessing webcam:', err);
+                alert('Could not access webcam. Please ensure you have webcam permissions enabled.');
+                return false;
+            }
+        }
+        
+        // Start camera automatically when page loads
+        setTimeout(() => {
+            startWebcam();
+        }, 500);
+        
+        // Keep the click event for the button as a fallback
+        startBtn.addEventListener('click', async function() {
+            await startWebcam();
+        });
+        
+        // Capture image
+        captureBtn.addEventListener('click', function() {
+            if (!streaming) return;
+            
+            const context = canvas.getContext('2d');
+            
+            // Draw video frame to canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Get base64 image data
+            const imageData = canvas.toDataURL('image/jpeg');
+            
+            // Copy to result canvas
+            const resultContext = resultCanvas.getContext('2d');
+            resultContext.drawImage(video, 0, 0, resultCanvas.width, resultCanvas.height);
+            
+            // Set form data
+            imageDataInput.value = imageData;
+            
+            // Show result, hide instructions
+            captureResult.classList.remove('d-none');
+            instructions.classList.add('d-none');
+            
+            // Show retake button, hide capture button
+            captureBtn.classList.add('d-none');
+            retakeBtn.classList.remove('d-none');
+            
+            // Hide face overlay
+            faceOverlay.classList.add('d-none');
+        });
+        
+        // Retake photo
+        retakeBtn.addEventListener('click', function() {
+            // Hide result, show instructions
+            captureResult.classList.add('d-none');
+            instructions.classList.remove('d-none');
+            
+            // Show capture button, hide retake button
+            captureBtn.classList.remove('d-none');
+            retakeBtn.classList.add('d-none');
+            
+            // Show face overlay
+            faceOverlay.classList.remove('d-none');
+            
+            // Clear form data
+            imageDataInput.value = '';
+        });
+        
+        // Stop webcam
+        stopBtn.addEventListener('click', function() {
+            if (streaming) {
+                const stream = video.srcObject;
+                const tracks = stream.getTracks();
+                
+                tracks.forEach(function(track) {
+                    track.stop();
+                });
+                
+                video.srcObject = null;
+                streaming = false;
+                
+                // Reset buttons
+                startBtn.disabled = false;
+                captureBtn.disabled = true;
+                stopBtn.disabled = true;
+                
+                // Hide retake button if visible
+                if (!retakeBtn.classList.contains('d-none')) {
+                    retakeBtn.classList.add('d-none');
+                    captureBtn.classList.remove('d-none');
+                }
+                
+                // Show instructions
+                captureResult.classList.add('d-none');
+                instructions.classList.remove('d-none');
+                
+                // Show face overlay
+                faceOverlay.classList.remove('d-none');
+            }
+        });
+    });
+</script>
+{% endblock %}
