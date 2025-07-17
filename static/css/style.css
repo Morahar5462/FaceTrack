@@ -1,0 +1,311 @@
+/**
+ * Custom styles for FaceAttend
+ * Building on Bootstrap base styles
+ */
+
+/* General Styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+}
+
+main {
+    flex: 1 0 auto;
+    padding: 20px 0;
+}
+
+.footer {
+    flex-shrink: 0;
+    padding: 15px 0;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Container adjustments */
+.container, .container-fluid {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+/* Alignment utilities */
+.text-center-xs {
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .text-md-left {
+        text-align: left !important;
+    }
+}
+
+/* Card Styles */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    font-weight: 500;
+}
+
+/* Dashboard Stats Cards */
+.feature-icon {
+    width: 4rem;
+    height: 4rem;
+}
+
+/* Timeline Styles */
+.timeline {
+    position: relative;
+    padding-left: 50px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20px;
+    width: 2px;
+    height: 100%;
+    background-color: var(--bs-primary);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-date {
+    position: absolute;
+    left: -50px;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    background-color: var(--bs-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+    z-index: 1;
+}
+
+.timeline-content {
+    padding: 15px;
+    background-color: var(--bs-dark);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Attendance Status Colors */
+.status-present {
+    color: var(--bs-success);
+}
+
+.status-absent {
+    color: var(--bs-danger);
+}
+
+.status-late {
+    color: var(--bs-warning);
+}
+
+/* Face Registration Styles */
+.face-guide {
+    opacity: 0.7;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    width: 200px;
+    height: 200px;
+}
+
+#camera-container {
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 100%;
+    position: relative;
+    min-height: 300px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--bs-primary);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#webcam {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+#canvas {
+    display: none;
+}
+
+/* Attendance Overview Styles */
+.attendance-overview {
+    background-color: var(--bs-dark);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.attendance-overview .card {
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.attendance-overview .card-header {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.attendance-percentage {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.attendance-table th {
+    background-color: rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Table Improvements */
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Progress Bar Customizations */
+.progress {
+    overflow: visible;
+}
+
+.progress-bar {
+    position: relative;
+    overflow: visible;
+}
+
+/* Attendance Chart Colors */
+.chart-present {
+    background-color: var(--bs-success);
+}
+
+.chart-absent {
+    background-color: var(--bs-danger);
+}
+
+.chart-late {
+    background-color: var(--bs-warning);
+}
+
+/* Responsive Image */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Custom Badges */
+.badge-outline-primary {
+    color: var(--bs-primary);
+    border: 1px solid var(--bs-primary);
+    background-color: transparent;
+}
+
+.badge-outline-success {
+    color: var(--bs-success);
+    border: 1px solid var(--bs-success);
+    background-color: transparent;
+}
+
+.badge-outline-danger {
+    color: var(--bs-danger);
+    border: 1px solid var(--bs-danger);
+    background-color: transparent;
+}
+
+/* Custom Utilities */
+.shadow-hover:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Animation for loading indicators */
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+}
+
+.pulse {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Custom student avatar */
+.student-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--bs-secondary);
+    color: white;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+    .timeline {
+        padding-left: 40px;
+    }
+    
+    .timeline-date {
+        left: -40px;
+        width: 30px;
+        height: 30px;
+        font-size: 0.7rem;
+    }
+}
